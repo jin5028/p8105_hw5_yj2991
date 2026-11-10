@@ -1,0 +1,84 @@
+---
+title: "DATA SCIENCE HW5"
+author: "Yiran Jin"
+date: "2026-11-10"
+output: html_document
+---
+
+## Problem 1
+```{r}
+library(tidyverse)
+set.seed(1)
+
+birthday_repeated = function(n_room) {
+  
+  birthdays = sample(1:365, size = n_room, replace = TRUE)
+  
+  repeated_birthdays = length(unique(birthdays)) < n_room
+  
+  return(repeated_birthdays)
+  
+}
+
+sim_results = 
+  tibble(group_size = 2:50) |> 
+  mutate(
+    prob_repeated = map_dbl(
+      group_size,
+      \(n) mean(replicate(10000, birthday_repeated(n)))
+    )
+  )
+
+sim_results |> 
+  ggplot(aes(x = group_size, y = prob_repeated)) +
+  geom_point() +
+  geom_line() +
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  labs(
+    title = "Probability of a shared birthday by group size",
+    x = "Group size",
+    y = "Probability of at least two shared birthdays"
+  )
+```
+
+## Problem 2
+```{r}
+
+```
+
+
+## Problem 3
+```{r}
+set.seed(1)
+
+sim_t <- function(mu, n = 30, sigma = 5, nsim = 5000) {
+  map_dfr(1:nsim, \(i) {
+    x <- rnorm(n, mean = mu, sd = sigma)
+    broom::tidy(t.test(x, mu = 0)) |> select(estimate, p.value)
+  }) |> mutate(mu = mu)
+}
+
+res <- map_dfr(0:6, sim_t)
+
+summ <- res |>
+  group_by(mu) |>
+  summarize(power   = mean(p.value < 0.05),
+            avg_all = mean(estimate),
+            avg_rej = mean(estimate[p.value < 0.05]))
+
+# Plot 1: power vs mu
+ggplot(summ, aes(mu, power)) +
+  geom_line() + geom_point() +
+  labs(x = "True mu", y = "Proportion of null rejected (power)")
+
+# Plot 2: average estimate, all vs rejected only
+summ |>
+  pivot_longer(c(avg_all, avg_rej), names_to = "which", values_to = "avg") |>
+  mutate(which = recode(which, avg_all = "All samples",
+                        avg_rej = "Only samples where null rejected")) |>
+  ggplot(aes(mu, avg, color = which)) +
+  geom_line() + geom_point() +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+  labs(x = "True mu", y = "Average estimate of mu-hat", color = NULL)
+```
+
