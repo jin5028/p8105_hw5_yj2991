@@ -144,3 +144,7 @@ summ |>
   labs(x = "True mu", y = "Average estimate of mu-hat", color = NULL)
 ```
 
+Power increases with the true effect size $\mu$. Power is about 0.19 at $\mu = 1$, 0.57 at $\mu = 2$, 0.89 at $\mu = 3$, and 0.99 or higher for $\mu \geq 4$.
+
+Across all samples, $\hat{\mu}$ is approximately equal to $\mu$, since the sample mean is unbiased. Among samples where the null was rejected, $\hat{\mu}$ is not equal to $\mu$ when power is low. When power is low, only samples with unusually large estimates reach $p < 0.05$, so the average of the rejected samples overestimates $\mu$. As power approaches 1, the two lines coincide.
+
