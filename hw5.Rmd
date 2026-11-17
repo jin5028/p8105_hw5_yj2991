@@ -2,11 +2,11 @@
 title: "DATA SCIENCE HW5"
 author: "Yiran Jin"
 date: "2026-11-10"
-output: html_document
+output: pdf_document
 ---
 
 ## Problem 1
-```{r}
+```{r,message=FALSE, warning=FALSE}
 library(tidyverse)
 set.seed(1)
 
@@ -40,9 +40,10 @@ sim_results |>
     y = "Probability of at least two shared birthdays"
   )
 ```
+The probability of a shared birthday rises in an S-shaped curve with group size. It crosses 50% at about 23 people and reaches roughly 97% by 50. This is surprising because the number of pairs grows much faster than the number of people.
 
 ## Problem 2
-```{r}
+```{r,message=FALSE}
 library(tidyverse)
 file_names = tibble(
   file = list.files("data", full.names = TRUE)
@@ -73,7 +74,37 @@ longitudinal_df =
   ) %>%
   select(subject_id, arm, week, observation)
 
+# Create a spaghetti plot
+ggplot(
+  longitudinal_df,
+  aes(
+    x = week,
+    y = observation,
+    group = interaction(subject_id, arm),
+    color = arm
+  )
+) +
+  geom_line(alpha = 0.5) +
+  geom_point() +
+  labs(
+    title = "Spaghetti Plot of Individual Outcomes Over Time",
+    x = "Week",
+    y = "Observation",
+    color = "Study Arm"
+  ) +
+  theme_minimal()
 
+longitudinal_df %>%
+  distinct(subject_id, arm) %>%
+  count(arm)
+
+longitudinal_df %>%
+  count(subject_id, arm)
+
+longitudinal_df %>%
+  summarize(
+    missing = sum(is.na(observation))
+  )
 
 
 ```
