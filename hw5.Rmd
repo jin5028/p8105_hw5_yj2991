@@ -43,6 +43,38 @@ sim_results |>
 
 ## Problem 2
 ```{r}
+library(tidyverse)
+file_names = tibble(
+  file = list.files("data", full.names = TRUE)
+)
+
+file_names = file_names %>%
+  mutate(
+    data = map(file, read_csv),
+    file_name = basename(file),
+    arm = if_else(
+      str_detect(file_name, "^con"),
+      "control",
+      "experimental"
+    ),
+    subject_id = str_extract(file_name, "\\d+")
+  )
+
+longitudinal_df =
+  file_names %>%
+  unnest(data) %>%
+  pivot_longer(
+    cols = starts_with("week_"),
+    names_to = "week",
+    values_to = "observation"
+  ) %>%
+  mutate(
+    week = as.integer(str_remove(week, "week_"))
+  ) %>%
+  select(subject_id, arm, week, observation)
+
+
+
 
 ```
 
