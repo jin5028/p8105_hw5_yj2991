@@ -105,10 +105,9 @@ longitudinal_df %>%
   summarize(
     missing = sum(is.na(observation))
   )
-
-
 ```
 
+At week 1 the two arms are similar. Over 8 weeks the control arm stays roughly flat, while the experimental arm tends to increase. In the later weeks, most experimental subjects are above most control subjects. Individual lines vary a lot within each arm, so the group difference is clearest toward the end.
 
 ## Problem 3
 ```{r}
